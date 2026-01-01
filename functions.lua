@@ -1,3 +1,5 @@
+print("Functions.lua загружен")
+
 local Functions = {}
 local Players = game:GetService("Players")
 local Camera = workspace.CurrentCamera

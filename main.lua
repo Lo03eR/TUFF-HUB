@@ -1,3 +1,5 @@
+print("main загружен")
+
 local function GetFile(File)
     -- Используем твой путь, но добавляем проверку кэша (?v=...)
     local Success, Content = pcall(function()

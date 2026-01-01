@@ -1,3 +1,5 @@
+print("Aimbot.lua загружен")
+
 local Aimbot = {}
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")

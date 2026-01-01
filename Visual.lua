@@ -1,3 +1,5 @@
+print("Visual.lua загружен")
+
 local Visuals = {}
 local RunService = game:GetService("RunService")
 
