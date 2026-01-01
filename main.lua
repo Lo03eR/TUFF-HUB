@@ -1,33 +1,34 @@
--- [[ ЗАГРУЗЧИК ]]
-local function Load(file)
-    local url = "https://raw.githubusercontent.com/Lo03eR/TUFF-HUB/refs/heads/main/" .. file
-    local success, err = pcall(function()
-        loadstring(game:HttpGet(url))()
+local function GetFile(File)
+    -- Используем твой путь, но добавляем проверку кэша (?v=...)
+    local Success, Content = pcall(function()
+        return game:HttpGet("https://raw.githubusercontent.com/Lo03eR/TUFF-HUB/refs/heads/main/" .. File .. "?v=" .. tick())
     end)
-    if not success then warn("Ошибка в файле " .. file .. ": " .. err) end
+    if Success then return Content else return nil end
 end
 
--- СТРОГИЙ ПОРЯДОК:
-Load("Config.lua")    -- Сначала настройки
-task.wait(0.2)
-Load("Functions.lua") -- Потом инструменты
-task.wait(0.2)
-Load("Aimbot.lua")    -- Потом логика
-task.wait(0.2)
-Load("Visuals.lua")   -- Потом визуалы
+-- 1. Загружаем Конфиг (ОБЯЗАТЕЛЬНО ПЕРВЫМ)
+local ConfigSrc = GetFile("Config.lua")
+if ConfigSrc then loadstring(ConfigSrc)() end
 
--- Проверяем, всё ли загрузилось, прежде чем запускать меню
-if getgenv().TuffAimbot and getgenv().TuffAimbot.Init then
+-- Ждем чуть-чуть, чтобы таблица TuffConfig точно появилась в памяти
+repeat task.wait() until getgenv().TuffConfig
+
+-- 2. Загружаем остальные модули
+local FuncsSrc = GetFile("Functions.lua")
+if FuncsSrc then loadstring(FuncsSrc)() end
+
+local AimSrc = GetFile("Aimbot.lua")
+if AimSrc then loadstring(AimSrc)() end
+
+local VisSrc = GetFile("Visuals.lua")
+if VisSrc then loadstring(VisSrc)() end
+
+-- 3. Запускаем GUI и логику
+if getgenv().TuffAimbot then
     getgenv().TuffAimbot.Init()
-else
-    warn("Критическая ошибка: Модуль Aimbot не найден в памяти!")
 end
 
--- Дальше идет твой Rayfield...
-
--- 5. Запускаем всё!
-getgenv().TuffAimbot.Init() -- Запускаем цикл аимбота
-
+-- Сюда вставляй свой код Rayfield...
 -- 6. Подключаем меню Rayfield
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({ Name = "TuffHub Modular", LoadingTitle = "Запуск..." })
